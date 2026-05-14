@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Привет, {{ current_user.username }} 👋</h1>
+    <p>Добро пожаловать в ваш личный кабинет</p>
+</div>
+
+<div class="balance-grid">
+    <div class="balance-card">
+        <div class="balance-card-label">Основной счёт</div>
+        <div class="balance-card-amount">₽{{ "%.2f"|format(current_user.balance) }}</div>
+        <div class="balance-card-sub">Доступно для операций</div>
+    </div>
+    <div class="balance-card accent">
+        <div class="balance-card-label">Накопления</div>
+        <div class="balance-card-amount">₽{{ "%.2f"|format(savings.balance) }}</div>
+        <div class="balance-card-sub">Накопительный счёт</div>
+    </div>
+</div>
+
+<div class="action-grid">
+    <a href="/transfer" class="action-btn">
+        <div class="action-btn-icon">↗️</div>
+        <div class="action-btn-label">Перевод</div>
+    </a>
+    <a href="/payments" class="action-btn">
+        <div class="action-btn-icon">💳</div>
+        <div class="action-btn-label">Платежи</div>
+    </a>
+    <a href="/savings" class="action-btn">
+        <div class="action-btn-icon">🏦</div>
+        <div class="action-btn-label">Накопления</div>
+    </a>
+    <a href="/history" class="action-btn">
+        <div class="action-btn-icon">📋</div>
+        <div class="action-btn-label">История</div>
+    </a>
+</div>
+
+{% endblock %}

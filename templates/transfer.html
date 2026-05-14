@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="form-page">
+    <div class="page-header">
+        <h1>Перевод</h1>
+        <p>Отправьте деньги другому пользователю</p>
+    </div>
+    <div class="card">
+        <div class="savings-stat" style="margin-bottom:24px;">
+            <div class="savings-stat-label">Доступно для перевода</div>
+            <div class="savings-stat-value">₽{{ "%.2f"|format(current_user.balance) }}</div>
+        </div>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label class="form-label">Получатель</label>
+                {{ form.recipient(class='form-input', placeholder='Имя пользователя') }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Сумма ₽</label>
+                {{ form.amount(class='form-input', placeholder='0.00') }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Комментарий (необязательно)</label>
+                {{ form.description(class='form-input', placeholder='За что перевод?') }}
+            </div>
+            <div style="margin-top:8px;">
+                {{ form.submit(class='btn btn-primary btn-full') }}
+            </div>
+        </form>
+    </div>
+    <div style="margin-top:12px;">
+        <a href="/dashboard" class="btn btn-secondary btn-full">← Назад</a>
+    </div>
+</div>
+{% endblock %}

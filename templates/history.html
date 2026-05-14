@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>История операций</h1>
+    <p>Все ваши транзакции</p>
+</div>
+
+<div class="card">
+    {% if transactions %}
+    <div class="tx-list">
+        {% for tx in transactions %}
+            {% if tx.type == 'TRANSFER' and tx.sender_id == current_user.id %}
+                {% set icon = '↗️' %} {% set icon_class = 'out' %} {% set sign = '−' %} {% set cls = 'expense' %}
+            {% elif tx.type == 'TRANSFER' and tx.receiver_id == current_user.id %}
+                {% set icon = '↙️' %} {% set icon_class = 'in' %} {% set sign = '+' %} {% set cls = 'income' %}
+            {% elif tx.type == 'ROUNDUP_PAYMENT' %}
+                {% set icon = '🎯' %} {% set icon_class = 'pay' %} {% set sign = '−' %} {% set cls = 'expense' %}
+            {% else %}
+                {% set icon = '💳' %} {% set icon_class = 'pay' %} {% set sign = '−' %} {% set cls = 'expense' %}
+            {% endif %}
+        <div class="tx-item">
+            <div class="tx-left">
+                <div class="tx-icon {{ icon_class }}">{{ icon }}</div>
+                <div>
+                    <div class="tx-desc">{{ tx.description or 'Транзакция' }}</div>
+                    <div class="tx-date">{{ tx.timestamp.strftime('%d.%m.%Y, %H:%M') }}</div>
+                </div>
+            </div>
+            <div class="tx-amount {{ cls }}">
+                {{ sign }}₽{{ "%.2f"|format(tx.amount) }}
+                {% if tx.round_up_amount and tx.round_up_amount > 0 %}
+                    <span style="font-size:11px; color:var(--green); display:block; font-weight:500;">+{{ "%.2f"|format(tx.round_up_amount) }} в копилку</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <p>Операций пока нет</p>
+    </div>
+    {% endif %}
+</div>
+
+{% if pending %}
+<div class="page-header" style="margin-top:32px;">
+    <h1 style="font-size:18px;">Буфер транзакций (последние 10)</h1>
+    <p>Статусы из PendingTransaction — COMPLETED / REJECTED / HELD</p>
+</div>
+<div class="card">
+    <div class="tx-list">
+        {% for p in pending %}
+        <div class="tx-item">
+            <div class="tx-left">
+                <div class="tx-icon {% if p.status == 'COMPLETED' %}in{% elif p.status == 'REJECTED' %}out{% else %}pay{% endif %}">
+                    {% if p.status == 'COMPLETED' %}✓{% elif p.status == 'REJECTED' %}✗{% else %}⏳{% endif %}
+                </div>
+                <div>
+                    <div class="tx-desc">{{ p.category }} — {{ p.type }}</div>
+                    <div class="tx-date">{{ p.created_at.strftime('%d.%m.%Y, %H:%M') }}</div>
+                </div>
+            </div>
+            <div>
+                <span class="tx-amount {% if p.status == 'COMPLETED' %}income{% else %}expense{% endif %}" style="font-size:14px;">
+                    {{ p.status }}
+                </span>
+                <div style="font-size:13px; color:var(--gray); text-align:right;">₽{{ "%.2f"|format(p.amount) }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

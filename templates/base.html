@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduBank</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">
+        <div class="logo-icon">E</div>
+        EduBank
+    </a>
+    <div class="nav-links">
+        {% if current_user.is_authenticated %}
+            <a href="/dashboard" class="nav-link">Главная</a>
+            <a href="/transfer" class="nav-link">Переводы</a>
+            <a href="/payments" class="nav-link">Платежи</a>
+            <a href="/savings" class="nav-link">Накопления</a>
+            <a href="/history" class="nav-link">История</a>
+            <a href="/logout" class="nav-link nav-logout">Выйти</a>
+        {% else %}
+            <a href="/login" class="nav-link">Войти</a>
+            <a href="/register" class="btn-nav">Открыть счёт</a>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="main-container">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash-message">
+                    <span class="flash-icon">ℹ</span>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

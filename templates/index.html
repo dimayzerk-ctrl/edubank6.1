@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <div class="hero-badge">✦ Учебный банк для практики</div>
+    <h1>Банк нового<br><span>поколения</span></h1>
+    <p>Практикуйтесь в управлении финансами в безопасной учебной среде</p>
+    <div class="hero-buttons">
+        <a href="/register" class="btn btn-primary" style="font-size:16px; padding:16px 36px;">Открыть счёт</a>
+        <a href="/login" class="btn btn-secondary" style="font-size:16px; padding:16px 36px;">Войти</a>
+    </div>
+
+    <div class="hero-features">
+        <div class="feature-card">
+            <div class="feature-icon">💸</div>
+            <h3>Мгновенные переводы</h3>
+            <p>Отправляйте деньги другим пользователям в один клик</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏦</div>
+            <h3>Накопительный счёт</h3>
+            <p>Откладывайте средства и следите за балансом накоплений</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>История операций</h3>
+            <p>Полная история всех транзакций в удобном формате</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
