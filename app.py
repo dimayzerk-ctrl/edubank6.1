@@ -26,7 +26,7 @@ def load_user(user_id):
 #         Если два запроса придут одновременно — второй ждёт первого.
 #         Это решает Race Condition: баланс не уйдёт в минус.
 # Шаг 3: повторная проверка баланса внутри блокировки (TOCTOU-защита)
-# Шаг 4: Round-up для "Подписок" — ceil(99.99) - 99.99 = 0.01 ₽ в копилку
+# Шаг 4: Round-up для ВСЕХ платежей — ceil(99.99) - 99.99 = 0.01 ₽ в копилку
 # Шаг 5: HELD → COMPLETED или REJECTED
 def atomic_payment(user_id, amount, category):
     round_up = 0.0
@@ -37,7 +37,7 @@ def atomic_payment(user_id, amount, category):
         amount=amount,
         category=category,
         status='HELD',
-        type='ROUNDUP_PAYMENT' if category == 'Подписки' else 'PAYMENT'
+        type='PAYMENT'
     )
     db.session.add(pending)
     db.session.flush()
@@ -54,14 +54,13 @@ def atomic_payment(user_id, amount, category):
         db.session.commit()
         return False, 'Недостаточно средств', 0.0
 
-    # Шаг 4: Round-up только для подписок
+    # Шаг 4: Round-up для ВСЕХ платежей
     # ceil(150.50) = 151, round_up = 0.50 ₽ идёт в накопления
-    if category == 'Подписки':
-        round_up = round(ceil(amount) - amount, 2)
-        if round_up > 0 and user.balance >= (amount + round_up):
-            pass  # берём amount + round_up
-        else:
-            round_up = 0.0  # не хватает на округление — берём без него
+    round_up = round(ceil(amount) - amount, 2)
+    if round_up > 0 and user.balance >= (amount + round_up):
+        pass  # хватает — берём с округлением
+    else:
+        round_up = 0.0  # не хватает на копейки — берём без округления
 
     total = amount + round_up
     user.balance = round(user.balance - total, 2)
@@ -81,7 +80,7 @@ def atomic_payment(user_id, amount, category):
         amount=amount,
         round_up_amount=round_up,
         description=desc,
-        type='ROUNDUP_PAYMENT' if round_up > 0 else 'PAYMENT'
+        type='ROUNDUP_PAYMENT' if round_up > 0 else 'PAYMENT'  # ROUNDUP если были копейки
     )
     db.session.add(transaction)
 
