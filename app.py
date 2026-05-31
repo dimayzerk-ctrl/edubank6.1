@@ -345,7 +345,7 @@ def subscription():
             sender_id=current_user.id,
             receiver_id=current_user.id,
             amount=150,
-            description='Покупка Premium подписки'
+            description='Premium подписка на 1 месяц'
         )
 
         db.session.add(transaction)
