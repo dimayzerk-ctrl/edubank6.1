@@ -253,13 +253,54 @@ def savings():
 @login_required
 def payments():
     form = PaymentForm()
+
+    subscription = Subscription.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    if subscription.active:
+        game_commission = 3
+    else:
+        game_commission = 5
+
     if form.validate_on_submit():
         amount = float(form.amount.data)
-        category = form.category.data
-        success, message, round_up = atomic_payment(current_user.id, amount, category)
-        flash(message)
+
+        commission_percent = 0
+
+        if form.category.data == 'Игры':
+            commission_percent = game_commission
+
+        commission = amount * commission_percent / 100
+        total = amount + commission
+
+        if current_user.balance < total:
+            flash('Недостаточно средств')
+            return redirect(url_for('payments'))
+
+        current_user.balance -= total
+
+        transaction = Transaction(
+            sender_id=current_user.id,
+            receiver_id=current_user.id,
+            amount=amount,
+            description=f'Оплата: {form.category.data}'
+        )
+
+        db.session.add(transaction)
+        db.session.commit()
+
+        flash(
+            f'Платёж выполнен. Комиссия: {commission:.2f}₽'
+        )
+
         return redirect(url_for('payments'))
-    return render_template('payments.html', form=form)
+
+    return render_template(
+        'payments.html',
+        form=form,
+        game_commission=game_commission
+    )
 
 
 @app.route('/history')
