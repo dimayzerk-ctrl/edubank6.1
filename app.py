@@ -165,39 +165,55 @@ def dashboard():
 @login_required
 def transfer():
     form = TransferForm()
+
+    subscription = Subscription.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    commission_percent = 1 if subscription.active else 3
+
     if form.validate_on_submit():
+        recipient = User.query.filter_by(
+            username=form.recipient.data
+        ).first()
+
         amount = float(form.amount.data)
-        recipient = User.query.filter_by(username=form.recipient.data).first()
+
+        commission = amount * commission_percent / 100
+        total = amount + commission
+
         if not recipient:
-            flash('Пользователь не найден')
-            return redirect(url_for('transfer'))
-        if recipient.id == current_user.id:
-            flash('Нельзя переводить самому себе')
+            flash('Получатель не найден')
             return redirect(url_for('transfer'))
 
-        # Pessimistic Lock для переводов
-        user = db.session.execute(
-            select(User).where(User.id == current_user.id).with_for_update()
-        ).scalar_one()
-
-        if user.balance < amount:
+        if current_user.balance < total:
             flash('Недостаточно средств')
             return redirect(url_for('transfer'))
 
-        user.balance = round(user.balance - amount, 2)
-        recipient.balance = round(recipient.balance + amount, 2)
+        current_user.balance -= total
+        recipient.balance += amount
+
         transaction = Transaction(
-            sender_id=user.id,
+            sender_id=current_user.id,
             receiver_id=recipient.id,
             amount=amount,
-            description=form.description.data or f'Перевод пользователю {recipient.username}',
-            type='TRANSFER'
+            description=f'Перевод ({commission_percent}% комиссия)'
         )
+
         db.session.add(transaction)
         db.session.commit()
-        flash(f'Перевод {amount} ₽ пользователю {recipient.username} выполнен')
+
+        flash(
+            f'Перевод выполнен. Комиссия: {commission:.2f}₽'
+        )
+
         return redirect(url_for('dashboard'))
-    return render_template('transfer.html', form=form)
+
+    return render_template(
+        'transfer.html',
+        form=form,
+        commission_percent=commission_percent
+    )
 
 
 @app.route('/savings', methods=['GET', 'POST'])
