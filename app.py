@@ -5,7 +5,14 @@ from math import ceil
 from datetime import datetime
 from config import Config
 from models import db, User, Transaction, SavingsAccount, Subscription, PendingTransaction
-from forms import RegisterForm, LoginForm, TransferForm, SavingsForm, PaymentForm
+from forms import (
+    RegisterForm,
+    LoginForm,
+    TransferForm,
+    SavingsForm,
+    PaymentForm,
+    SubscriptionForm
+)
 
 app = Flask(__name__)
 app.config.from_object(Config)
