@@ -4,7 +4,7 @@ from sqlalchemy import select
 from math import ceil
 from datetime import datetime
 from config import Config
-from models import db, User, Transaction, SavingsAccount, PendingTransaction
+from models import db, User, Transaction, SavingsAccount, Subscription, PendingTransaction
 from forms import RegisterForm, LoginForm, TransferForm, SavingsForm, PaymentForm
 
 app = Flask(__name__)
