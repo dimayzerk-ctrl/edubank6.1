@@ -93,3 +93,6 @@ class PaymentForm(FlaskForm):
         validators=[DataRequired(), NumberRange(min=0.01, message='Сумма должна быть больше 0')]
     )
     submit = SubmitField('Оплатить')
+    
+class SubscriptionForm(FlaskForm):
+    submit = SubmitField('Оформить подписку за 150₽')
