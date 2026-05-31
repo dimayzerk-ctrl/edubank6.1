@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard-card">
+
+    <h2>Premium Подписка</h2>
+
+    <div class="premium-box">
+
+        <h3>Возможности:</h3>
+
+        <ul class="premium-list">
+            <li>Комиссия переводов: 1%</li>
+            <li>Комиссия игр: 3%</li>
+            <li>Premium статус</li>
+            <li>Приоритетный интерфейс</li>
+        </ul>
+
+        <div class="premium-price">
+            150₽ / навсегда
+        </div>
+
+        {% if subscription.active %}
+
+            <div class="premium-active">
+                Подписка уже активна
+            </div>
+
+        {% else %}
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.submit(class="btn primary full") }}
+        </form>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
