@@ -2,36 +2,48 @@
 
 {% block content %}
 
-<div class="dashboard-card">
+<div class="subscription-page">
 
-    <h2>Premium Подписка</h2>
+    <div class="subscription-card">
 
-    <div class="premium-box">
+        <div class="subscription-header">
+            <h1>EduBank Premium</h1>
+            <p>Сниженные комиссии и премиум возможности</p>
+        </div>
 
-        <h3>Возможности:</h3>
+        <div class="subscription-price">
+            150₽
+            <span>/ месяц</span>
+        </div>
 
-        <ul class="premium-list">
-            <li>Комиссия переводов: 1%</li>
-            <li>Комиссия игр: 3%</li>
-            <li>Premium статус</li>
-            <li>Приоритетный интерфейс</li>
-        </ul>
+        <div class="subscription-benefits">
 
-        <div class="premium-price">
-            150₽ / навсегда
+            <div class="benefit-item">
+                <h3>Переводы</h3>
+                <p>Комиссия 1% вместо 3%</p>
+            </div>
+
+            <div class="benefit-item">
+                <h3>Игры</h3>
+                <p>Комиссия 3% вместо 5%</p>
+            </div>
+
         </div>
 
         {% if subscription.active %}
 
-            <div class="premium-active">
-                Подписка уже активна
-            </div>
+        <div class="premium-active">
+            Подписка активна
+        </div>
 
         {% else %}
 
         <form method="POST">
             {{ form.hidden_tag() }}
-            {{ form.submit(class="btn primary full") }}
+
+            <button class="premium-btn">
+                Оформить подписку
+            </button>
         </form>
 
         {% endif %}
