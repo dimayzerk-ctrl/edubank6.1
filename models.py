@@ -36,6 +36,11 @@ class SavingsAccount(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     balance = db.Column(db.Float, default=0.0)
 
+class Subscription(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    active = db.Column(db.Boolean, default=False)
+
 # ── ИЗЮМИНКА: Промежуточный буфер транзакций ──────────────────────────────
 # Реализует Atomic Payment Buffering (APB):
 # Транзакция сначала попадает сюда со статусом HELD,
