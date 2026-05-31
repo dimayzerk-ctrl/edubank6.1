@@ -322,6 +322,45 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+@app.route('/subscription', methods=['GET', 'POST'])
+@login_required
+def subscription():
+    form = SubscriptionForm()
+
+    subscription = Subscription.query.filter_by(
+        user_id=current_user.id
+    ).first()
+
+    if form.validate_on_submit():
+
+        if current_user.balance < 150:
+            flash('Недостаточно средств')
+            return redirect(url_for('subscription'))
+
+        current_user.balance -= 150
+
+        subscription.active = True
+
+        transaction = Transaction(
+            sender_id=current_user.id,
+            receiver_id=current_user.id,
+            amount=150,
+            description='Покупка Premium подписки'
+        )
+
+        db.session.add(transaction)
+        db.session.commit()
+
+        flash('Подписка успешно оформлена')
+
+        return redirect(url_for('dashboard'))
+
+    return render_template(
+        'subscription.html',
+        form=form,
+        subscription=subscription
+    )
+
 
 with app.app_context():
     db.create_all()
