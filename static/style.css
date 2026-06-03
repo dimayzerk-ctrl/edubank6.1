@@ -753,3 +753,32 @@ select {
     font-weight: 600;
     color: #ffdd2d;
 }
+
+/* PREMIUM BUTTON */
+
+.premium-dashboard-btn {
+    display: inline-block;
+    padding: 16px 34px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 18px;
+    color: black;
+    background: linear-gradient(
+        135deg,
+        #ffdd2d,
+        #ffb800
+    );
+    box-shadow:
+        0 0 20px rgba(255,221,45,.45),
+        0 10px 30px rgba(0,0,0,.3);
+
+    transition: .3s;
+}
+
+.premium-dashboard-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow:
+        0 0 30px rgba(255,221,45,.65),
+        0 15px 40px rgba(0,0,0,.35);
+}
